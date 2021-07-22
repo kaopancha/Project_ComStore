@@ -1,0 +1,38 @@
+version: "2"
+services:
+    www:
+        build: .
+        ports: 
+            - "8081:80"
+        volumes:
+            - ./www:/var/www/html/
+        links:
+            - mydb
+        networks:
+            - default
+    mydb:
+        image: mysql
+        ports: 
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: landmarkspec
+            MYSQL_USER: user
+            MYSQL_PASSWORD: landmarkspec
+            MYSQL_ROOT_PASSWORD: landmarkspec
+        volumes:
+            - ./database:/docker-entrypoint-initdb.d
+            - persistent:/var/lib/mysql
+        networks:
+            - default
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links: 
+            - mydb:db
+        ports:
+            - 8080:80
+        environment:
+            MYSQL_USER: user
+            MYSQL_PASSWORD: landmarkspec
+            MYSQL_ROOT_PASSWORD: landmarkspec
+volumes:
+    persistent:
